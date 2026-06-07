@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador Epidemiológico SIR — Entorno Universitario</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.plot.ly/plotly-2.26.0.min.js"></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <h1>Modelo SIR — Simulador Epidemiológico</h1>
+      <p class="subtitle">Modelo matemático de propagación de enfermedades en entornos universitarios</p>
+      <span class="badge">Ecuaciones Diferenciales · 2025–2026</span>
+    </div>
+  </header>
+
+  <nav class="navbar" id="navbar">
+    <button class="tab-btn" data-tab="info">📖 Fundamentos</button>
+    <button class="tab-btn active" data-tab="sim">📊 Simulación</button>
+  </nav>
+
+  <main>
+    <!-- ===== PESTAÑA: INFORMACIÓN ===== -->
+    <div class="tab-content" id="tab-info">
+      <div class="main-layout">
+
+        <div class="panel panel-intro">
+          <p>El <strong>modelo SIR</strong> (Susceptibles–Infectados–Recuperados) es una herramienta matemática clásica de la epidemiología. Divide la población en tres compartimentos y describe mediante ecuaciones diferenciales cómo fluyen los individuos entre ellos durante un brote infeccioso.</p>
+        </div>
+
+        <section class="panel panel-compartments">
+          <h2>Los 3 Compartimentos</h2>
+          <div class="compartment-grid">
+            <div class="compartment-card card-s">
+              <div class="comp-icon">🧑‍🎓</div>
+              <h3>Susceptibles <span class="eq-ds">S(t)</span></h3>
+              <p>Personas que pueden contraer la enfermedad. No han sido infectadas ni poseen inmunidad.</p>
+            </div>
+            <div class="compartment-card card-i">
+              <div class="comp-icon">🤒</div>
+              <h3>Infectados <span class="eq-di">I(t)</span></h3>
+              <p>Personas actualmente contagiadas que pueden transmitir la enfermedad a los susceptibles.</p>
+            </div>
+            <div class="compartment-card card-r">
+              <div class="comp-icon">🛡️</div>
+              <h3>Recuperados <span class="eq-dr">R(t)</span></h3>
+              <p>Personas que superaron la enfermedad y adquirieron inmunidad permanente.</p>
+            </div>
+          </div>
+
+          <div class="flow-diagram">
+            <div class="flow-box flow-s">Susceptibles</div>
+            <div class="flow-arrow"><span class="flow-label">β</span>→</div>
+            <div class="flow-box flow-i">Infectados</div>
+            <div class="flow-arrow"><span class="flow-label">γ</span>→</div>
+            <div class="flow-box flow-r">Recuperados</div>
+          </div>
+        </section>
+
+        <section class="panel panel-info-eq">
+          <h2>Ecuaciones del Modelo</h2>
+          <p class="section-desc">El sistema de ecuaciones diferenciales ordinarias que gobierna la dinámica:</p>
+          <div class="equations-grid info-eq-grid">
+            <div class="equation">
+              <span class="eq-derivative eq-ds">dS/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-negative">−β · S · I / N</span>
+            </div>
+            <div class="equation">
+              <span class="eq-derivative eq-di">dI/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-positive">β · S · I / N</span>
+              <span class="eq-minus">−</span>
+              <span class="eq-green">γ · I</span>
+            </div>
+            <div class="equation">
+              <span class="eq-derivative eq-dr">dR/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-green">γ · I</span>
+            </div>
+          </div>
+          <div class="eq-note">
+            <p>El término <strong>β · S · I / N</strong> representa la <em>incidencia</em>: nuevos contagios por día. La división entre <strong>N</strong> normaliza la probabilidad de contacto, haciendo que β sea una propiedad de la enfermedad independiente del tamaño poblacional.</p>
+          </div>
+          <div class="params-mini">
+            <div class="param-chip"><span class="param-chip-sym">β</span> Tasa de contagio <span class="param-chip-unit">contactos/día</span></div>
+            <div class="param-chip"><span class="param-chip-sym">γ</span> Tasa de recuperación <span class="param-chip-unit">1/días</span></div>
+            <div class="param-chip"><span class="param-chip-sym">R₀</span> = β / γ <span class="param-chip-unit">umbral epidémico</span></div>
+          </div>
+        </section>
+
+        <section class="panel panel-interpretation">
+          <h2>Interpretación</h2>
+          <div class="interp-grid">
+            <div class="interp-card">
+              <div class="interp-icon">
+                <span class="eq-ds" style="font-size:1.2rem;font-weight:700;">dS/dt</span>
+              </div>
+              <p>Los susceptibles <strong>disminuyen</strong> a medida que se infectan. La tasa de salida es proporcional al contacto entre S e I.</p>
+            </div>
+            <div class="interp-card">
+              <div class="interp-icon">
+                <span class="eq-di" style="font-size:1.2rem;font-weight:700;">dI/dt</span>
+              </div>
+              <p>Los infectados <strong>aumentan</strong> por nuevos contagios y <strong>disminuyen</strong> por recuperaciones. El brote crece si β/γ &gt; 1.</p>
+            </div>
+            <div class="interp-card">
+              <div class="interp-icon">
+                <span class="eq-dr" style="font-size:1.2rem;font-weight:700;">dR/dt</span>
+              </div>
+              <p>Los recuperados <strong>aumentan</strong> a medida que los infectados superan la enfermedad, acumulando inmunidad en la población.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-assumptions">
+          <div class="callout-box">
+            <h3>📌 Supuestos del modelo</h3>
+            <ul>
+              <li>La población total N permanece constante (sin nacimientos, muertes ni migración).</li>
+              <li>Mezcla homogénea: todos tienen la misma probabilidad de interactuar.</li>
+              <li>Los recuperados adquieren inmunidad permanente y no reingresan a susceptibles.</li>
+              <li>La enfermedad se transmite solo por contacto directo S–I.</li>
+              <li>Los períodos de incubación se ignoran (infección instantánea al contagio).</li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="panel panel-apps">
+          <h2>Aplicaciones</h2>
+          <div class="apps-grid">
+            <div class="app-card">
+              <span class="app-icon">🏥</span>
+              <h4>Salud pública</h4>
+              <p>Estimación de picos epidémicos y recursos hospitalarios necesarios.</p>
+            </div>
+            <div class="app-card">
+              <span class="app-icon">💉</span>
+              <h4>Estrategias de vacunación</h4>
+              <p>Evaluación del impacto de la inmunidad parcial en la propagación.</p>
+            </div>
+            <div class="app-card">
+              <span class="app-icon">📚</span>
+              <h4>Investigación académica</h4>
+              <p>Base para modelos más complejos (SEIR, SIRS, meta-poblacionales).</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-usage">
+          <h2>Cómo usar el simulador</h2>
+          <div class="steps-list">
+            <div class="step-item"><span class="step-num">1</span> Ajusta los parámetros con los sliders (N, β, γ, vacunación, etc.).</div>
+            <div class="step-item"><span class="step-num">2</span> Observa la gráfica principal con las curvas S(t), I(t) y R(t).</div>
+            <div class="step-item"><span class="step-num">3</span> Activa el modo paso a paso para ver cómo avanza RK4 día por día.</div>
+            <div class="step-item"><span class="step-num">4</span> Usa los escenarios preconfigurados para comparar situaciones.</div>
+            <div class="step-item"><span class="step-num">5</span> Analiza la comparación numérica (Euler vs Heun vs RK4) en la gráfica inferior.</div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ===== PESTAÑA: SIMULACIÓN ===== -->
+    <div class="tab-content active" id="tab-sim">
+      <div class="main-layout">
+        <section class="panel panel-equations" id="modelo-matematico">
+          <h2>Modelo Matemático</h2>
+          <div class="equations-grid">
+            <div class="equation" data-curve="S">
+              <span class="eq-derivative eq-ds">dS/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-negative">−β · S · I / N</span>
+            </div>
+            <div class="equation" data-curve="I">
+              <span class="eq-derivative eq-di">dI/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-positive">β · S · I / N</span>
+              <span class="eq-minus">−</span>
+              <span class="eq-green">γ · I</span>
+            </div>
+            <div class="equation" data-curve="R">
+              <span class="eq-derivative eq-dr">dR/dt</span>
+              <span class="eq-equals">=</span>
+              <span class="eq-green">γ · I</span>
+            </div>
+          </div>
+          <div class="derivatives-live" id="derivatives-live">
+            <h3>Evaluación numérica en vivo</h3>
+            <div class="derivative-eval" id="deriv-dS-row">
+              <span class="deriv-name eq-ds">dS/dt</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-formula">−β · S · I / N</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-subst" id="deriv-dS-subst">—</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-value" id="deriv-dS-val">—</span>
+              <span class="deriv-unit">pers/día</span>
+            </div>
+            <div class="derivative-eval" id="deriv-dI-row">
+              <span class="deriv-name eq-di">dI/dt</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-formula">β · S · I / N − γ · I</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-subst" id="deriv-dI-subst">—</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-value" id="deriv-dI-val">—</span>
+              <span class="deriv-unit">pers/día</span>
+            </div>
+            <div class="derivative-eval" id="deriv-dR-row">
+              <span class="deriv-name eq-dr">dR/dt</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-formula">γ · I</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-subst" id="deriv-dR-subst">—</span>
+              <span class="deriv-op">=</span>
+              <span class="deriv-value" id="deriv-dR-val">—</span>
+              <span class="deriv-unit">pers/día</span>
+            </div>
+          </div>
+          <div class="tables-container">
+            <table class="ref-table">
+              <thead>
+                <tr><th>Variable</th><th>Símbolo</th><th>Descripción</th><th>Unidad</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Susceptibles</td><td>S(t)</td><td>Población no infectada</td><td>individuos</td></tr>
+                <tr><td>Infectados</td><td>I(t)</td><td>Población contagiada activa</td><td>individuos</td></tr>
+                <tr><td>Recuperados</td><td>R(t)</td><td>Población recuperada/inmune</td><td>individuos</td></tr>
+                <tr><td>Población total</td><td>N</td><td>Población universitaria total</td><td>individuos</td></tr>
+              </tbody>
+            </table>
+            <table class="ref-table params-table">
+              <thead>
+                <tr><th>Parámetro</th><th>Símbolo</th><th>Descripción</th><th>Unidad</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Tasa de contagio</td><td>β</td><td>Contactos efectivos por día</td><td>contactos/día</td></tr>
+                <tr><td>Tasa de recuperación</td><td>γ</td><td>Fracción que se recupera por día</td><td>1/días</td></tr>
+                <tr id="r0-row">
+                  <td>Número reproductivo básico</td><td>R₀</td><td>β / γ — umbral epidémico</td><td>adimensional</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="two-column-layout">
+          <section class="panel panel-control" id="panel-control">
+            <h2>Panel de Control</h2>
+            <div class="slider-group" data-param="N">
+              <label>Población universitaria <span class="param-label">N</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-N" min="1000" max="50000" step="500" value="10000">
+                <span class="slider-value" id="val-N">10000</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="I0">
+              <label>Infectados iniciales <span class="param-label">I₀</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-I0" min="1" max="100" step="1" value="5">
+                <span class="slider-value" id="val-I0">5</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="beta">
+              <label>Tasa de contagio <span class="param-label">β</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-beta" min="0.05" max="1.00" step="0.01" value="0.30">
+                <span class="slider-value" id="val-beta">0.30</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="gamma">
+              <label>Tasa de recuperación <span class="param-label">γ</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-gamma" min="0.01" max="0.50" step="0.01" value="0.10">
+                <span class="slider-value" id="val-gamma">0.10</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="vac">
+              <label>Porcentaje vacunado <span class="param-label">%</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-vac" min="0" max="80" step="1" value="0">
+                <span class="slider-value" id="val-vac">0%</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="days">
+              <label>Duración de la simulación <span class="param-label">días</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-days" min="30" max="365" step="1" value="160">
+                <span class="slider-value" id="val-days">160</span>
+              </div>
+            </div>
+            <div class="slider-group" data-param="dt">
+              <label>Paso de tiempo <span class="param-label">dt</span></label>
+              <div class="slider-row">
+                <input type="range" id="slider-dt" min="0.1" max="5.0" step="0.1" value="1.0">
+                <span class="slider-value" id="val-dt">1.0</span>
+              </div>
+            </div>
+
+            <div class="stats-block" id="stats-block">
+              <h3>Estadísticas clave</h3>
+              <div class="stats-grid">
+                <div class="stat-item">
+                  <span class="stat-label">R₀</span>
+                  <span class="stat-value" id="stat-r0">—</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Día del pico</span>
+                  <span class="stat-value" id="stat-peak-day">—</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Máx. infectados</span>
+                  <span class="stat-value" id="stat-peak-val">—</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Total recuperados</span>
+                  <span class="stat-value" id="stat-recovered">—</span>
+                </div>
+                <div class="stat-item">
+                  <span class="stat-label">Población afectada</span>
+                  <span class="stat-value" id="stat-affected">—</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="button-row">
+              <button class="btn btn-primary" id="btn-run">▶ Ejecutar Simulación</button>
+              <button class="btn btn-secondary" id="btn-reset">↺ Restablecer valores</button>
+            </div>
+
+            <div class="step-mode" id="step-mode">
+              <div class="step-toggle-row">
+                <span class="step-label">Modo paso a paso</span>
+                <label class="switch">
+                  <input type="checkbox" id="btn-step-toggle">
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+              <div class="step-nav" id="step-nav" style="display:none;">
+                <button class="btn btn-step" id="btn-step-prev">◀ Anterior</button>
+                <span class="step-indicator" id="step-indicator">Paso 0 / 0</span>
+                <button class="btn btn-step" id="btn-step-next">Siguiente ▶</button>
+              </div>
+              <div class="step-details" id="step-details" style="display:none;">
+                <div class="step-section">
+                  <h4>Estado actual</h4>
+                  <div class="step-state-grid" id="step-state-grid">
+                    <div class="step-state-item"><span class="step-state-label eq-ds">S</span><span class="step-state-val" id="step-val-S">—</span></div>
+                    <div class="step-state-item"><span class="step-state-label eq-di">I</span><span class="step-state-val" id="step-val-I">—</span></div>
+                    <div class="step-state-item"><span class="step-state-label eq-dr">R</span><span class="step-state-val" id="step-val-R">—</span></div>
+                  </div>
+                </div>
+                <div class="step-section">
+                  <h4>Derivadas</h4>
+                  <div class="step-deriv-grid" id="step-deriv-grid">
+                    <div><span class="eq-ds">dS/dt</span> = <span class="step-deriv-val" id="step-dS">—</span></div>
+                    <div><span class="eq-di">dI/dt</span> = <span class="step-deriv-val" id="step-dI">—</span></div>
+                    <div><span class="eq-dr">dR/dt</span> = <span class="step-deriv-val" id="step-dR">—</span></div>
+                  </div>
+                </div>
+                <div class="step-section step-section-full">
+                  <h4>Pendientes RK4 <span class="step-k-help">(k₁, k₂, k₃, k₄)</span></h4>
+                  <div class="step-slopes-table-wrapper">
+                    <table class="slopes-table" id="slopes-table">
+                      <thead>
+                        <tr><th></th><th>k₁</th><th>k₂</th><th>k₃</th><th>k₄</th></tr>
+                      </thead>
+                      <tbody>
+                        <tr><td class="eq-ds">S</td><td id="k-S1">—</td><td id="k-S2">—</td><td id="k-S3">—</td><td id="k-S4">—</td></tr>
+                        <tr><td class="eq-di">I</td><td id="k-I1">—</td><td id="k-I2">—</td><td id="k-I3">—</td><td id="k-I4">—</td></tr>
+                        <tr><td class="eq-dr">R</td><td id="k-R1">—</td><td id="k-R2">—</td><td id="k-R3">—</td><td id="k-R4">—</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel panel-chart" id="grafica-principal">
+            <h2>Gráfica de Evolución</h2>
+            <div class="chart-container" id="mainChart"></div>
+          </section>
+        </div>
+
+        <section class="panel panel-scenarios" id="comparacion-escenarios">
+          <h2>Comparación de Escenarios</h2>
+          <div class="scenarios-grid" id="scenarios-grid">
+            <div class="scenario-card" data-scenario="parciales">
+              <div class="scenario-icon">🎓</div>
+              <h3>Semana de parciales</h3>
+              <p>β=0.45, γ=0.10</p>
+              <span class="scenario-tag">Alta aglomeración</span>
+            </div>
+            <div class="scenario-card" data-scenario="vacunacion">
+              <div class="scenario-icon">💉</div>
+              <h3>Campaña de vacunación</h3>
+              <p>40% vacunados, β=0.30, γ=0.10</p>
+              <span class="scenario-tag">Inmunidad parcial</span>
+            </div>
+            <div class="scenario-card" data-scenario="virtual">
+              <div class="scenario-icon">🏠</div>
+              <h3>Modalidad virtual</h3>
+              <p>β=0.08, γ=0.10</p>
+              <span class="scenario-tag">Mínimo contacto</span>
+            </div>
+            <div class="scenario-card" data-scenario="brote">
+              <div class="scenario-icon">🦠</div>
+              <h3>Brote descontrolado</h3>
+              <p>β=0.80, γ=0.05, I₀=20</p>
+              <span class="scenario-tag">Alto riesgo</span>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel panel-numerical" id="comparacion-numerica">
+          <h2>Comparación de Métodos Numéricos</h2>
+          <p class="section-desc">Comparación de I(t) calculada con Euler, Heun y RK4 bajo los mismos parámetros.</p>
+          <div class="chart-container" id="numericalChart"></div>
+          <div class="error-table-container">
+            <table class="error-table" id="error-table">
+              <thead>
+                <tr><th>Método</th><th>Error relativo máximo vs RK4</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Euler</td><td id="err-euler">—</td></tr>
+                <tr><td>Euler mejorado (Heun)</td><td id="err-heun">—</td></tr>
+                <tr><td>RK4</td><td>Referencia</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>Proyecto Final · Ecuaciones Diferenciales · Simulación basada en modelo SIR clásico</p>
+  </footer>
+
+  <script src="simulation.js"></script>
+</body>
+</html>
