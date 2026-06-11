@@ -447,6 +447,8 @@ function renderMainChart(solution, peakDay) {
     type: 'scatter', mode: 'lines',
     name: 'Susceptibles S(t)',
     line: { color: COLORS.susceptible, width: 2.5 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(88, 166, 255, 0.08)',
     hovertemplate: 'Día %{x}<br>S = %{y:,.0f}<extra></extra>'
   };
 
@@ -455,6 +457,8 @@ function renderMainChart(solution, peakDay) {
     type: 'scatter', mode: 'lines',
     name: 'Infectados I(t)',
     line: { color: COLORS.infectado, width: 2.5 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(248, 81, 73, 0.15)',
     hovertemplate: 'Día %{x}<br>I = %{y:,.0f}<extra></extra>'
   };
 
@@ -463,6 +467,8 @@ function renderMainChart(solution, peakDay) {
     type: 'scatter', mode: 'lines',
     name: 'Recuperados R(t)',
     line: { color: COLORS.recuperado, width: 2.5 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(63, 185, 80, 0.08)',
     hovertemplate: 'Día %{x}<br>R = %{y:,.0f}<extra></extra>'
   };
 
@@ -515,6 +521,8 @@ function renderNumericalComparisonChart(beta, gamma, N, S0, I0, R0_init, days, d
     type: 'scatter', mode: 'lines',
     name: 'Euler',
     line: { color: COLORS.euler, width: 2, dash: 'dot' },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(240, 136, 62, 0.06)',
     hovertemplate: 'Día %{x}<br>I_Euler = %{y:,.2f}<extra></extra>'
   };
 
@@ -523,6 +531,8 @@ function renderNumericalComparisonChart(beta, gamma, N, S0, I0, R0_init, days, d
     type: 'scatter', mode: 'lines',
     name: 'Heun',
     line: { color: COLORS.heun, width: 2, dash: 'dash' },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(210, 168, 255, 0.06)',
     hovertemplate: 'Día %{x}<br>I_Heun = %{y:,.2f}<extra></extra>'
   };
 
@@ -531,6 +541,8 @@ function renderNumericalComparisonChart(beta, gamma, N, S0, I0, R0_init, days, d
     type: 'scatter', mode: 'lines',
     name: 'RK4',
     line: { color: COLORS.rk4, width: 2.5 },
+    fill: 'tozeroy',
+    fillcolor: 'rgba(88, 166, 255, 0.08)',
     hovertemplate: 'Día %{x}<br>I_RK4 = %{y:,.2f}<extra></extra>'
   };
 
