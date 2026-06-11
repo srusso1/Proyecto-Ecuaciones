@@ -1191,6 +1191,26 @@ body {
   margin-bottom: 0;
 }
 
+/* === Conclusion === */
+.panel-conclusion .conclusion-box {
+  padding: 1.25rem;
+  background: rgba(88, 166, 255, 0.04);
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  border-left: 4px solid var(--accent-blue);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.7;
+}
+
+.conclusion-box p {
+  margin-bottom: 0.6rem;
+}
+
+.conclusion-box p:last-child {
+  margin-bottom: 0;
+}
+
 /* === Footer === */
 .footer {
   text-align: center;
